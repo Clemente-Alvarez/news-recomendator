@@ -30,10 +30,10 @@ public class CyclicBehaviourBuscador extends CyclicBehaviour {
 		ACLMessage msg = this.myAgent.blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
 		try {
 			// Imprimimos por pantalla el texto a buscar
-			System.out.println(msg.getSender().getName() + ":" + (String) msg.getContentObject());
+//			System.out.println(msg.getSender().getName() + ":" + (String) msg.getContentObject());
 			// Creamos una lista de respuestas y llamamos a nuestro método buscarCadena(),
 			// que utilizamos para realizar la búsqueda
-			List<Noticia> respuesta = buscarCadena((String) msg.getContentObject());
+			List<Noticia> respuesta = buscarCadena((List<String>) msg.getContentObject());
 			// Cuando la búsqueda ha finalizado, enviamos un mensaje de respuesta
 			ACLMessage aclMessage = new ACLMessage(ACLMessage.INFORM);
 			aclMessage.addReceiver(msg.getSender());
@@ -50,7 +50,7 @@ public class CyclicBehaviourBuscador extends CyclicBehaviour {
 		}
 	}
 
-	public List<Noticia> buscarCadena(String cadena) {
+	public List<Noticia> buscarCadena(List<String> tokens) {
 
 		// Definimos la lista de sitios web que vamos a utilizar
 		String sitios[] = {  "https://www.elpais.com" };     
@@ -73,16 +73,14 @@ public class CyclicBehaviourBuscador extends CyclicBehaviour {
 					String titulo = link.text().trim();
 	                String url = link.absUrl("href");
 
-					if(!titulo.isEmpty() && hasText(titulo, url, cadena)) {
-//						System.out.println("_------------------------_");
+					if(!titulo.isEmpty() && hasText(titulo, url, tokens)) {
+						System.out.println("_------------------------_");
+						System.out.println("TITULO: " + titulo + " -- " + url);
 						lista.add(new Noticia(titulo,url));
 					}
 					
-				}
-		
+				}	
 //
-				
-
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (MalformedURLException e) {
@@ -97,11 +95,14 @@ public class CyclicBehaviourBuscador extends CyclicBehaviour {
 	  private boolean containsIgnoreCase(String text, String search) {
 	        return text.toLowerCase().contains(search.toLowerCase());
 	    }
-	private boolean hasText(String titulo, String href, String cadena) {
-		System.out.println("Titulo: " + titulo + " -- " + href );
-		if (titulo.toLowerCase().contains(cadena.toLowerCase())) {
-			return true;
-		} //Si esta en titulo
+	private boolean hasText(String titulo, String href, List<String> tokens) {
+//		System.out.println("Titulo: " + titulo + " -- " + href );
+		for(String token : tokens) {
+			System.out.println("token: " + token);
+			if (titulo.toLowerCase().contains(token.toLowerCase())) {
+				return true;
+			} //Si esta en titulo
+		}
 
 		// ahora en el cuerpo
 		try {
@@ -110,13 +111,19 @@ public class CyclicBehaviourBuscador extends CyclicBehaviour {
 			Elements Body = doc.select("h2, h3, h4, p");
 			String cuerpo = Body.text();
 
-			System.out.println("Cuerpo: " + cuerpo);
+//			System.out.println("Cuerpo: " + cuerpo);
 			
-            return containsIgnoreCase(doc.body().text(), cadena);
+			for(String token : tokens) {
+				if(cuerpo.toLowerCase().contains(token)) {
+					return true;
+				}
+			}
+			
 		} catch (Exception err) {
 			System.out.println(err.getMessage());
 			return false;
 		}
+		return false;
 	}
 
 }

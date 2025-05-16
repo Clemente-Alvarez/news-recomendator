@@ -1,3 +1,5 @@
+package es.upm.practica.texto;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -6,8 +8,8 @@ import java.util.Map;
 
 public class Dictionary {
     //el nombre de diccionario es algo incorrecto porque un diccionario implica una entrada y su definición o traducción
-    Map<String, Integer> wordsMap;
-    Map<Integer, String> dicitionaryEntrys;
+    public Map<String, Integer> wordsMap;
+    public Map<Integer, String> dicitionaryEntrys;
 
     Dictionary(String dictioanryPath){
         wordsMap = new HashMap<>();
