@@ -13,6 +13,8 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 
+import javax.swing.JOptionPane;
+
 public class AgenteMostrador extends Agent {
 
 	ComportamientoUsuario cu;
@@ -45,29 +47,41 @@ public class AgenteMostrador extends Agent {
 
 			// Leemos el texto que introduce el usuario por pantalla y lo enviamos al agente
 			// Agente Buscador
-			Scanner scanner = new Scanner(System.in);
-			System.out.print("Introduzca el texto a buscar: ");
-			String temp = scanner.nextLine();
+			//Scanner scanner = new Scanner(System.in);
+			//System.out.print("Introduzca el texto a buscar: ");
+			//String temp = scanner.nextLine();
 
-			List<String> tokenized = tokenize(temp);
-			Utils.enviarMensaje(this.myAgent, "buscar", tokenized);
-			ACLMessage msg = blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.INFORM));
+			//List<String> tokenized = tokenize(temp);
+			//Utils.enviarMensaje(this.myAgent, "buscar", tokenized);
+			//ACLMessage msg = blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.INFORM));
 			// Cuando el agente AgenteBuscador responde, imprimimos su respuesta por
 			// pantalla
+			
+		
+			Scanner scanner = new Scanner(System.in);		
+			String s = JOptionPane.showInputDialog(null, "Introduzca el texto a buscar", "Input Dialog", JOptionPane.PLAIN_MESSAGE);
+			List<String> tokenized = tokenize(s);
+			Utils.enviarMensaje(this.myAgent, "buscar", tokenized);
+			ACLMessage msg = blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.INFORM));
+					
+			String text = "";
 
 			try {
 				List<Noticia> resultados = (List<Noticia>) msg.getContentObject();
 				// Mostramos los resultados
 				if (resultados.isEmpty()) {
-					System.out.println("No se encontraron noticias con el texto buscado.");
+					//System.out.println("No se encontraron noticias con el texto buscado.");
+					text = "No se encontraron noticias con el texto buscado" + "\n";
 				} else {
-					System.out.println("\nResultados encontrados:");
+					//System.out.println("\nResultados encontrados:");
 					for (Noticia noticia : resultados) {
-						System.out.println("Título: " + noticia.getTitulo());
-						System.out.println("Enlace: " + noticia.getUrl());
-						System.out.println("----------------------------");
+					//	System.out.println("Título: " + noticia.getTitulo());
+					//	System.out.println("Enlace: " + noticia.getUrl());
+					//	System.out.println("----------------------------");
+						text += noticia.toString() + "\n";
 					}
 				}
+				JOptionPane.showMessageDialog(null, text, "Message Dialog", JOptionPane.PLAIN_MESSAGE);
 
 			} catch (UnreadableException e) {
 				e.printStackTrace();
