@@ -1,11 +1,17 @@
 package es.upm.practica;
 
 import java.awt.BorderLayout;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowListener;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -92,6 +98,22 @@ public class MainGUI extends Thread {
 		progressBar.setPreferredSize(new Dimension(50, 10));
 				
 		table = new JTable(toTableModel(new ArrayList<Noticia>()));
+		table.addMouseListener(new MouseAdapter() {
+			 public void mouseClicked(MouseEvent e) {
+
+			        int row = table.getSelectedRow();
+			        int col = table.getSelectedColumn();
+			       			        
+			        if (Desktop.isDesktopSupported()) {
+			            try {
+			            	URI uri = new URI((String) table.getModel().getValueAt(row, 1));
+			            	Desktop.getDesktop().browse(uri);
+			            } 
+			            catch (IOException exc) {exc.printStackTrace();}
+			            catch (URISyntaxException exc) {exc.printStackTrace();}
+			        }
+			 }
+		});		
 	
 		JPanel centerPane = new JPanel();
 		centerPane.setLayout(new BoxLayout(centerPane, BoxLayout.LINE_AXIS));
