@@ -1,5 +1,9 @@
 package es.upm.practica;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -13,11 +17,28 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.lang.acl.UnreadableException;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 
 public class AgenteMostrador extends Agent {
 
 	ComportamientoUsuario cu;
+	String searchText;
+	MainGUI gui;
+	private JTextField searchField;
+	private JButton searchButton;
+	private JTable table;
+	private JScrollPane scrollPane;
+	private JProgressBar progressBar;
 
 	private static final Set<String> redundantes = new HashSet<>(Arrays.asList(
 			// preposiciones
@@ -38,8 +59,24 @@ public class AgenteMostrador extends Agent {
 		System.out.println("Agente Mostrador");
 		cu = new ComportamientoUsuario();
 		addBehaviour(cu);
+		
+		searchText = null;
+		gui = new MainGUI(this);
+		gui.start();
+	}
+	
+	public void setText(String newText) {
+		searchText = newText;
 	}
 
+	public void setComponents(JTextField searchField, JButton searchButton, JTable table, JScrollPane scrollPane, JProgressBar progressBar) {
+		this.searchField = searchField;
+		this.searchButton = searchButton;
+		this.table = table;
+		this.scrollPane = scrollPane;
+		this.progressBar = progressBar;	
+	}
+	
 	class ComportamientoUsuario extends CyclicBehaviour {
 
 		@Override
@@ -56,16 +93,14 @@ public class AgenteMostrador extends Agent {
 			//ACLMessage msg = blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.INFORM));
 			// Cuando el agente AgenteBuscador responde, imprimimos su respuesta por
 			// pantalla
-			
+
+			this.myAgent.doWait();			
 		
-			Scanner scanner = new Scanner(System.in);		
-			String s = JOptionPane.showInputDialog(null, "Introduzca el texto a buscar", "Input Dialog", JOptionPane.PLAIN_MESSAGE);
-			List<String> tokenized = tokenize(s);
+			List<String> tokenized = tokenize(searchText);
 			Utils.enviarMensaje(this.myAgent, "buscar", tokenized);
 			ACLMessage msg = blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.INFORM));
 					
 			String text = "";
-
 			try {
 				List<Noticia> resultados = (List<Noticia>) msg.getContentObject();
 				// Mostramos los resultados
@@ -75,13 +110,17 @@ public class AgenteMostrador extends Agent {
 				} else {
 					//System.out.println("\nResultados encontrados:");
 					for (Noticia noticia : resultados) {
-					//	System.out.println("Título: " + noticia.getTitulo());
-					//	System.out.println("Enlace: " + noticia.getUrl());
-					//	System.out.println("----------------------------");
-						text += noticia.toString() + "\n";
+						System.out.println("Título: " + noticia.getTitulo());
+						System.out.println("Enlace: " + noticia.getUrl());
+						System.out.println("----------------------------");
 					}
 				}
-				JOptionPane.showMessageDialog(null, text, "Message Dialog", JOptionPane.PLAIN_MESSAGE);
+
+				searchField.setEnabled(true);
+				searchButton.setEnabled(true);
+				table.setModel(MainGUI.toTableModel(resultados));
+				scrollPane.setVisible(true);
+				progressBar.setVisible(false);				
 
 			} catch (UnreadableException e) {
 				e.printStackTrace();
@@ -99,6 +138,8 @@ public class AgenteMostrador extends Agent {
 			}
 			return tokens;
 		}
+		
+
 
 	}
 
