@@ -53,7 +53,17 @@ public class CyclicBehaviourBuscador extends CyclicBehaviour {
 	public List<Noticia> buscarCadena(List<String> tokens) {
 
 		// Definimos la lista de sitios web que vamos a utilizar
-		String sitios[] = {  "https://www.elpais.com" };     
+		String sitios[] = {  
+				"https://www.elpais.com" ,
+				"https://www.elpais.com/internacional",
+				"https://www.elpais.com/opinion",
+				"https://www.elpais.com/espana",
+				"https://www.elpais.com/economia",
+				"https://www.elpais.com/sociedad",
+				"https://elpais.com/clima-y-medio-ambiente",
+				"https://elpais.com/ciencia/"
+				
+		};     
 //"https://www.elmundo.es",
 		List<Noticia> lista = new ArrayList<>();
 	
@@ -75,7 +85,7 @@ public class CyclicBehaviourBuscador extends CyclicBehaviour {
 
 					if(!titulo.isEmpty() && hasText(titulo, url, tokens)) {
 						System.out.println("_------------------------_");
-						System.out.println("TITULO: " + titulo + " -- " + url);
+						System.out.println("TITULO Encontrado!!: " + titulo + " -- " + url);
 						lista.add(new Noticia(titulo,url));
 					}
 					
@@ -98,7 +108,7 @@ public class CyclicBehaviourBuscador extends CyclicBehaviour {
 	private boolean hasText(String titulo, String href, List<String> tokens) {
 //		System.out.println("Titulo: " + titulo + " -- " + href );
 		for(String token : tokens) {
-			System.out.println("token: " + token);
+//			System.out.println("token: " + token);
 			if (titulo.toLowerCase().contains(token.toLowerCase())) {
 				return true;
 			} //Si esta en titulo
@@ -111,7 +121,7 @@ public class CyclicBehaviourBuscador extends CyclicBehaviour {
 			Elements Body = doc.select("h2, h3, h4, p");
 			String cuerpo = Body.text();
 
-//			System.out.println("Cuerpo: " + cuerpo);
+			System.out.println(href +  " Cuerpo: " + cuerpo);
 			
 			for(String token : tokens) {
 				if(cuerpo.toLowerCase().contains(token)) {
