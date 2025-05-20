@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class refactoredText {
+public class RefactoredText {
 
 	Map<String, Double> repetitions;
 
@@ -46,7 +46,7 @@ public class refactoredText {
 
 
 
-	public refactoredText(String text) {
+	public RefactoredText(String text) {
 
 		text = text.replaceAll("[^a-zA-Z0-9]", "");// quitamos los caracteres que no sean letras
 		text = " " + text + " "; 
@@ -106,7 +106,7 @@ public class refactoredText {
 		}
 	}
 
-	private double[][] compareToVector(refactoredText t2){
+	private double[][] compareToVector(RefactoredText t2){
 
 		Set<String> words = new HashSet<>();
 		words.addAll(getWords());
@@ -138,7 +138,7 @@ public class refactoredText {
 	}
 
 	// cheaper distance calculator
-	public double getDistanceL1(refactoredText t2){
+	public double getDistanceL1(RefactoredText t2){
 		double[][] vs = compareToVector(t2);
 
 		double[] v1 = vs[0];
@@ -154,7 +154,7 @@ public class refactoredText {
 	}
 
 	// More precise distance calculator
-	public Double getDistanceL2(refactoredText t2){
+	public Double getDistanceL2(RefactoredText t2){
 		double[][] vs = compareToVector(t2);
 
 		double[] v1 = vs[0];
