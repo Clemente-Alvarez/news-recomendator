@@ -1,6 +1,8 @@
 package es.upm.practica.texto;
 
+import java.security.KeyStore.Entry;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 
 import java.util.HashSet;
@@ -9,98 +11,102 @@ import java.util.Set;
 
 public class refactoredText {
 
-	Map<String, Integer> repetitions;
-	private Dictionary d;
+	Map<String, Double> repetitions;
 
 	private final String[] redundantWords = {
 			// preposiciones
 			"a", "ante", "bajo", "cabe", "con", "contra", "de", "desde", "durante", "en", "entre", "hacia", "hasta",
 			"mediante", "para", "por", "según", "sin", "so", "sobre", "tras", "versus", "vía",
-			// articulos
-			"el", "los", "la", "las", "un", "unos", "una", "unas",
-			// conjunciones
-			// coordinantes
-			// copulativas
-			"y", "e", "ni", "así", "como", "también",
-			// Disyuntivas
-			"o", "u", "bien", "si",
-			// Adversativas
-			"pero", "ahora", "sin", "embargo", "sino", "cambio", "obstante", "excepto", "salvo", "menos",
-			// Distributivas
-			"ora", "ya", "no", "solamente", "que",
-			// Ilativas
-			"pues", "tanto", "por", "consiguiente", "es", "tal", "ahí", "sea",
-			// Continuativas
-			"aún", "además", "más", "otra", "asimismo", "otro",
-			// subordinantes
-
+			// determinantes 
+				//articulos
+				"el", "los", "la", "las", "un", "unos", "una", "unas", "lo", 
+				//Posesivos
+				"mi", "mis", "tu", "tus", "nuestro", "nuestra", "nuestros", "nuestras", "vuestros", "vuestras", "vuestro", "vuestra", "sus", "su",
+				//demostrativos
+				"este", "esta",  "estos", "estas", "ese", "esa", "esas", "esos",  "aquel", "aquella", "aquellos", "aquellas", 
+				//indefinidos
+				"alguno", "alguna", "algunos", "algunas", "cierto", "cierta", "ciertos", "ciertas", "bastante", "bastantes",
+			//pronombres
+			"yo", "nosotros", "vosotros", "ellos", "ellas",
+				// conjunciones
+				// coordinantes
+				// copulativas
+				"y", "e", "ni", "así", "como", "también",
+				// Disyuntivas
+				"o", "u", "bien", "si",
+				// Adversativas
+					"pero", "ahora", "sin", "embargo", "sino", "cambio", "obstante", "excepto", "salvo", "menos",
+					// Distributivas
+					"ora", "ya", "no", "solamente", "que",
+					// Ilativas
+					"pues", "tanto", "por", "consiguiente", "es", "tal", "ahí", "sea",
+					// Continuativas
+					"aún", "además", "más", "otra", "asimismo", "otro",
 	};
 
 
 
-	public refactoredText(String text, Dictionary d) {
+	public refactoredText(String text) {
 
-		this.d = d;
-		text = text.replaceAll("[^a-zA-Z]", "");// quitamos los caracteres que no sean letras
+		text = text.replaceAll("[^a-zA-Z0-9]", "");// quitamos los caracteres que no sean letras
+		text = " " + text + " "; 
 		for (String word : redundantWords) {// eliminar palabras redundantes
 			text = text.replaceAll(" " + word + " ", " ");
 		}
 		text = text.toLowerCase();// pasar a minuscula
 		String words[] = text.split(" ");
 
-		repetitions = new HashMap<String, Integer>();
+		repetitions = new HashMap<String, Double>();
 
-		String rWord = d.contains(words[0]);
-		if (!repetitions.get(rWord).equals(null))
-			repetitions.put(rWord, repetitions.get(rWord) + 1);
-		else
-			repetitions.put(rWord, 1);
+		for(int i = 0; i < words.length; i++){
+			if (!repetitions.containsKey(words[i]))
+				repetitions.put(words[i], repetitions.get(words[i]) + 1);
+			else
+				repetitions.put(words[i], 1.0);
+		}
+
+		genVectorNormL1();
+		//genVectorNormL2();
 	}
 
 	public Set<String> getWords() {
 		return repetitions.keySet();
 	}
 
-	public Integer getRepetitions(String word) {
+	public double getRepetitions(String word) {
 		return repetitions.get(word);
 	}
 
-	boolean usingDictioanry(Dictionary dic) {
-		return dic.equals(d);
+	public boolean containsWord(String word) {
+		return repetitions.containsKey(word);
 	}
 
-	double[] genVectorNormL1(double[] unNormalicedVector) {
-		double[] result = new double[unNormalicedVector.length];
+	private void genVectorNormL1() {
+		Collection<Double> temp = repetitions.values();
 		double norm = 0.0;
-		for (int i = 0; i < unNormalicedVector.length; i++) {
-			double value = unNormalicedVector[i];
-			norm = +value;// los valores son simepre positivos por eso me ahorro el valor absoluto
-			result[i] = value;
+		for (Double value : temp) {
+			norm =+value;// los valores son simepre positivos por eso me ahorro el valor absoluto
 		}
-		for (int i = 0; i < result.length; i++) {
-			result[i] = result[i] / norm;
+		Set<String> words = repetitions.keySet();
+		for (String word : words) {
+			repetitions.put(word, repetitions.get(word)/norm);
 		}
-		return result;
 	}
 
-	double[] genVectorNormL2(double[] unNormalicedVector) {
-		double[] result = new double[unNormalicedVector.length];
+	private void genVectorNormL2() {
+		Collection<Double> temp = repetitions.values();
 		Double norm = 0.0;
-		for (int i = 0; i < unNormalicedVector.length; i++) {
-			double value = unNormalicedVector[i];
-			norm = +(value * value);// los valores son simepre positivos por eso me ahorro el valor absoluto
-			result[i] = value;
+		for (Double value : temp) {
+			norm =+(value * value);// los valores son simepre positivos por eso me ahorro el valor absoluto
 		}
 		norm = Math.sqrt(norm);
-		for (int i = 0; i < result.length; i++) {
-			result[i] = result[i] / norm;
+		Set<String> words = repetitions.keySet();
+		for (String word : words) {
+			repetitions.put(word, repetitions.get(word)/norm);
 		}
-		return result;
 	}
 
-	private double[][] compareToVector(refactoredText t2) throws Exception {
-		if (!t2.usingDictioanry(d))
-			throw new Exception("non compatible dictionaries");
+	private double[][] compareToVector(refactoredText t2){
 
 		Set<String> words = new HashSet<>();
 		words.addAll(getWords());
@@ -112,15 +118,15 @@ public class refactoredText {
 
 		int i = 0;
 		for (String word : words) {
-			if (getRepetitions(word).equals(null))
-				v1[i] = 0.;
-			else
+			if (containsWord(word))
 				v1[i] = getRepetitions(word);
-
-			if (t2.getRepetitions(word).equals(null))
-				v2[i] = 0.;
 			else
+				v1[i] = 0.;
+
+			if (t2.containsWord(word))
 				v2[i] = t2.getRepetitions(word);
+			else
+				v2[i] = 0.;
 
 			i++;
 		}
@@ -132,7 +138,7 @@ public class refactoredText {
 	}
 
 	// cheaper distance calculator
-	public double getDistanceL1(refactoredText t2) throws Exception {
+	public double getDistanceL1(refactoredText t2){
 		double[][] vs = compareToVector(t2);
 
 		double[] v1 = vs[0];
@@ -148,7 +154,7 @@ public class refactoredText {
 	}
 
 	// More precise distance calculator
-	public Double getDistanceL2(refactoredText t2) throws Exception {
+	public Double getDistanceL2(refactoredText t2){
 		double[][] vs = compareToVector(t2);
 
 		double[] v1 = vs[0];
@@ -160,6 +166,6 @@ public class refactoredText {
 			result = +Math.abs((v1[i] * v1[i]) - (v2[i] * v2[i]));
 		}
 
-		return result;
+		return Math.sqrt(result);
 	}
 }
