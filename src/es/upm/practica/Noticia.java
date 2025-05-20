@@ -6,10 +6,12 @@ public class Noticia implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private String titulo;
 	private String url;
+	private String cuerpo;
 
-	public Noticia(String titulo, String url) {
+	public Noticia(String titulo, String url, String cuerpo) {
 		this.titulo = titulo;
 		this.url = url;
+		this.cuerpo = cuerpo;
 	}
 
 	public String getTitulo() {
@@ -18,6 +20,10 @@ public class Noticia implements Serializable {
 
 	public String getUrl() {
 		return url;
+	}
+	
+	public String getCuerpo() {
+		return cuerpo;
 	}
 
 	@Override
