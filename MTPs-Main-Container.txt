@@ -1,1 +1,1 @@
-http://IsabellaCL:7778/acc
+http://kali:7778/acc
