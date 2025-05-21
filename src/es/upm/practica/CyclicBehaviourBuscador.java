@@ -35,17 +35,9 @@ public class CyclicBehaviourBuscador extends CyclicBehaviour {
 			// que utilizamos para realizar la búsqueda
 			List<Noticia> respuesta = buscarCadena((List<String>) msg.getContentObject());
 			// Cuando la búsqueda ha finalizado, enviamos un mensaje de respuesta
-			ACLMessage aclMessage = new ACLMessage(ACLMessage.INFORM);
-			aclMessage.addReceiver(msg.getSender());
-			aclMessage.setOntology("ontologia");
-			aclMessage.setLanguage(new SLCodec().getName());
-			aclMessage.setEnvelope(new Envelope());
-			aclMessage.getEnvelope().setPayloadEncoding("ISO8859_1");
-			aclMessage.setContentObject((Serializable) respuesta);
-			this.myAgent.send(aclMessage);
+			Utils.enviarMensaje(this.myAgent, "operador", respuesta);
+
 		} catch (UnreadableException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}

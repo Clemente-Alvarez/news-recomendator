@@ -98,6 +98,8 @@ public class AgenteMostrador extends Agent {
 		
 			List<String> tokenized = tokenize(searchText);
 			Utils.enviarMensaje(this.myAgent, "buscar", tokenized);
+			Utils.enviarMensaje(this.myAgent, "operador", tokenized);
+
 			ACLMessage msg = blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.INFORM));
 					
 			String text = "";

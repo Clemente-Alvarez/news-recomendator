@@ -72,8 +72,8 @@ public class AgenteOperador extends Agent{
 				//ACLMessage msg = blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.INFORM));
 				// Cuando el agente AgenteBuscador responde, imprimimos su respuesta por
 				// pantalla
-			 	ACLMessage busqueda = blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.INFORM));
-				ACLMessage articulos = blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.INFORM));
+			 	ACLMessage busqueda = blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
+				ACLMessage articulos = blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
 				String text = "";
 				try {
 					List<Noticia> resultados = (List<Noticia>) articulos.getContentObject();
@@ -85,9 +85,9 @@ public class AgenteOperador extends Agent{
 					} else {
 						//System.out.println("\nResultados encontrados:");
 						RefactoredText refactoredQuery = new RefactoredText(query);
-						PriorityQueue<Pair> pq = new PriorityQueue<>(new Comparator<Pair>() {
-							public int compare(Pair a, Pair b) {
-								if(a.score <= b.score) return -1;
+						PriorityQueue<Noticia> pq = new PriorityQueue<>(new Comparator<Noticia>() {
+							public int compare(Noticia a, Noticia b) {
+								if(a.getScore() <= b.getScore()) return -1;
 								else return 1;
 							}
 						});
@@ -95,8 +95,8 @@ public class AgenteOperador extends Agent{
 							String resultadoS =  resultado.getCuerpo();
 							RefactoredText refactoredText = new RefactoredText(resultadoS);
 							Double dist = refactoredQuery.getDistanceL1(refactoredText);
-							Pair p = new Pair(dist,resultado.getUrl());
-							pq.offer(p);
+							resultado.setScore(dist);
+							pq.offer(resultado);
 						}
 						ACLMessage aclMessage = new ACLMessage(ACLMessage.INFORM);
 						aclMessage.addReceiver(busqueda.getSender());
@@ -104,7 +104,7 @@ public class AgenteOperador extends Agent{
 						aclMessage.setLanguage(new SLCodec().getName());
 						aclMessage.setEnvelope(new Envelope());
 						aclMessage.getEnvelope().setPayloadEncoding("ISO8859_1");
-						aclMessage.setContentObject((Serializable) new ArrayList<Pair>(pq));
+						aclMessage.setContentObject((Serializable) new ArrayList<Noticia>(pq));
 						this.myAgent.send(aclMessage);
 						
 					}

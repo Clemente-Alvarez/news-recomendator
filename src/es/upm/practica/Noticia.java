@@ -7,11 +7,16 @@ public class Noticia implements Serializable {
 	private String titulo;
 	private String url;
 	private String cuerpo;
+	private Double score;
 
 	public Noticia(String titulo, String url, String cuerpo) {
 		this.titulo = titulo;
 		this.url = url;
 		this.cuerpo = cuerpo;
+	}
+	
+	public void setScore(Double score) {
+		this.score = score;
 	}
 
 	public String getTitulo() {
@@ -24,6 +29,10 @@ public class Noticia implements Serializable {
 	
 	public String getCuerpo() {
 		return cuerpo;
+	}
+	
+	public Double getScore() {
+		return score;
 	}
 
 	@Override

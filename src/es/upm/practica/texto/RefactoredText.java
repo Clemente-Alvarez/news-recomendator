@@ -44,7 +44,10 @@ public class RefactoredText {
 					"aún", "además", "más", "otra", "asimismo", "otro",
 	};
 
-
+	public RefactoredText() {
+		repetitions = new HashMap<>();
+		
+	}
 
 	public RefactoredText(String text) {
 
@@ -69,6 +72,16 @@ public class RefactoredText {
 		//genVectorNormL2();
 	}
 
+	public void setText(String text) {
+		text = text.replaceAll("[^a-zA-Z0-9]", "");// quitamos los caracteres que no sean letras
+		text = " " + text + " "; 
+		for (String word : redundantWords) {// eliminar palabras redundantes
+			text = text.replaceAll(" " + word + " ", " ");
+		}
+		text = text.toLowerCase();// pasar a minuscula
+		String words[] = text.split(" ");
+	}
+	
 	public Set<String> getWords() {
 		return repetitions.keySet();
 	}
