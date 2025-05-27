@@ -54,7 +54,7 @@ public class AgenteOperador extends Agent{
 		}
 		// añado un comportamiento cíclico para recibir mensajes que demandan búsquedas
 		// y atenderlas
-		addBehaviour(new CyclicBehaviourBuscador());
+		addBehaviour(new ComportamientoOperador());
 	}
 	
 	class ComportamientoOperador extends CyclicBehaviour{
@@ -77,7 +77,8 @@ public class AgenteOperador extends Agent{
 				String text = "";
 				try {
 					List<Noticia> resultados = (List<Noticia>) articulos.getContentObject();
-					String query = (String) busqueda.getContentObject();
+					List<String> queryTok = (List<String>) busqueda.getContentObject();
+					String query = String.join(" ", queryTok);
 					// Mostramos los resultados
 					if (resultados.isEmpty()) {
 						//System.out.println("No se encontraron noticias con el texto buscado.");

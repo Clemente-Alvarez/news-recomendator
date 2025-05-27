@@ -62,7 +62,7 @@ public class RefactoredText {
 		repetitions = new HashMap<String, Double>();
 
 		for(int i = 0; i < words.length; i++){
-			if (!repetitions.containsKey(words[i]))
+			if (repetitions.containsKey(words[i]))
 				repetitions.put(words[i], repetitions.get(words[i]) + 1);
 			else
 				repetitions.put(words[i], 1.0);
