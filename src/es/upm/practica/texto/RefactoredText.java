@@ -44,14 +44,9 @@ public class RefactoredText {
 					"aún", "además", "más", "otra", "asimismo", "otro",
 	};
 
-	public RefactoredText() {
-		repetitions = new HashMap<>();
-		
-	}
-
 	public RefactoredText(String text) {
 
-		text = text.replaceAll("[^a-zA-Z0-9]", "");// quitamos los caracteres que no sean letras
+		text = text.replaceAll("[^a-zA-Z0-9\s]", "");// quitamos los caracteres que no sean letras
 		text = " " + text + " "; 
 		for (String word : redundantWords) {// eliminar palabras redundantes
 			text = text.replaceAll(" " + word + " ", " ");
@@ -71,16 +66,6 @@ public class RefactoredText {
 		genVectorNormL1();
 		//genVectorNormL2();
 	}
-
-	public void setText(String text) {
-		text = text.replaceAll("[^a-zA-Z0-9]", "");// quitamos los caracteres que no sean letras
-		text = " " + text + " "; 
-		for (String word : redundantWords) {// eliminar palabras redundantes
-			text = text.replaceAll(" " + word + " ", " ");
-		}
-		text = text.toLowerCase();// pasar a minuscula
-		String words[] = text.split(" ");
-	}
 	
 	public Set<String> getWords() {
 		return repetitions.keySet();
@@ -98,7 +83,7 @@ public class RefactoredText {
 		Collection<Double> temp = repetitions.values();
 		double norm = 0.0;
 		for (Double value : temp) {
-			norm =+value;// los valores son simepre positivos por eso me ahorro el valor absoluto
+			norm += value;// los valores son simepre positivos por eso me ahorro el valor absoluto
 		}
 		Set<String> words = repetitions.keySet();
 		for (String word : words) {
@@ -162,7 +147,7 @@ public class RefactoredText {
 		for (int a = 0; a < v1.length; a++) {
 			result = +Math.abs(v1[a] - v2[a]);
 		}
-
+		System.out.println("result: " + result);
 		return result;
 	}
 
