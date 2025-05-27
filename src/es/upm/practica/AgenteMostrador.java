@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
@@ -105,6 +106,7 @@ public class AgenteMostrador extends Agent {
 			String text = "";
 			try {
 				List<Noticia> resultados = (List<Noticia>) msg.getContentObject();
+				Collections.sort(resultados);
 				// Mostramos los resultados
 				if (resultados.isEmpty()) {
 					//System.out.println("No se encontraron noticias con el texto buscado.");
@@ -112,8 +114,9 @@ public class AgenteMostrador extends Agent {
 				} else {
 					//System.out.println("\nResultados encontrados:");
 					for (Noticia noticia : resultados) {
-						System.out.println("Título: " + noticia.getTitulo());
-						System.out.println("Enlace: " + noticia.getUrl());
+						System.out.println("Título:\t" + noticia.getTitulo());
+						System.out.println("Distancia:\t" + noticia.getScore());
+						System.out.println("Enlace:\t" + noticia.getUrl());
 						System.out.println("----------------------------");
 					}
 				}

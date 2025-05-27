@@ -2,7 +2,7 @@ package es.upm.practica;
 
 import java.io.Serializable;
 
-public class Noticia implements Serializable {
+public class Noticia implements Serializable, Comparable<Noticia> {
 	private static final long serialVersionUID = 1L;
 	private String titulo;
 	private String url;
@@ -39,4 +39,11 @@ public class Noticia implements Serializable {
 	public String toString() {
 		return titulo + " [" + url + "]";
 	}
+
+	@Override
+	public int compareTo(Noticia o) {
+		return (int) (getScore() - o.getScore());
+	}
 }
+
+
