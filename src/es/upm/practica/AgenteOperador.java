@@ -86,12 +86,7 @@ public class AgenteOperador extends Agent{
 					} else {
 						//System.out.println("\nResultados encontrados:");
 						RefactoredText refactoredQuery = new RefactoredText(query);
-						PriorityQueue<Noticia> pq = new PriorityQueue<>(new Comparator<Noticia>() {
-							public int compare(Noticia a, Noticia b) {
-								if(a.getScore() <= b.getScore()) return -1;
-								else return 1;
-							}
-						});
+						PriorityQueue<Noticia> pq = new PriorityQueue<>();
 						for(Noticia resultado : resultados) {
 							String resultadoS =  resultado.getCuerpo();
 							RefactoredText refactoredText = new RefactoredText(resultadoS);

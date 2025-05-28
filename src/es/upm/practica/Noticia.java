@@ -42,7 +42,8 @@ public class Noticia implements Serializable, Comparable<Noticia> {
 
 	@Override
 	public int compareTo(Noticia o) {
-		return (int) (getScore() - o.getScore());
+		if(getScore() >= o.getScore()) return 1;
+		else return -1;
 	}
 }
 
