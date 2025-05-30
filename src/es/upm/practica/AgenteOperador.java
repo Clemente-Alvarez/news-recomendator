@@ -75,25 +75,14 @@ public class AgenteOperador extends Agent{
 					if (resultados.isEmpty()) {
 						text = "No se encontraron noticias con el texto buscado" + "\n";
 					} else {
-						System.out.println(query);
 						RefactoredText refactoredQuery = new RefactoredText(query);
-						List<RefactoredText> listRT = new ArrayList<>();
 						Map<String,Noticia> map = new HashMap<>();
 						for(Noticia resultado : resultados) {
-							String resultadoS = resultado.getTitulo();
-							resultadoS =  resultadoS + " " + resultado.getCuerpo();
+							String resultadoS =  resultado.getCuerpo();
 							RefactoredText refactoredText = new RefactoredText(resultadoS);
-							listRT.add(refactoredText);
-							//Double dist = refactoredQuery.getDistanceL1(refactoredText);
-							//resultado.setScore(dist);
-							//if(!map.containsKey(resultado.getUrl())) map.put(resultado.getUrl(),resultado);
-						}
-						System.out.println("*****************");
-						List<Double> scores = refactoredQuery.getDistanceL1(listRT);
-						for(int i = 0; i<resultados.size(); i++) {
-							resultados.get(i).setScore(scores.get(resultados.size()-i-1));
-							if(!map.containsKey(resultados.get(i).getUrl())) 
-								map.put(resultados.get(i).getUrl(), resultados.get(i));
+							Double dist = refactoredQuery.getDistanceL1(refactoredText);
+							resultado.setScore(dist);
+							if(!map.containsKey(resultado.getUrl())) map.put(resultado.getUrl(),resultado);
 						}
 						List<Noticia> list = new ArrayList<>(map.values());
 						Collections.sort(list);
