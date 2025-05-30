@@ -3,10 +3,14 @@ package es.upm.practica;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.Set;
 
 import es.upm.practica.texto.RefactoredText;
 import jade.content.lang.sl.SLCodec;
@@ -60,18 +64,6 @@ public class AgenteOperador extends Agent{
 	class ComportamientoOperador extends CyclicBehaviour{
 		 @Override
 			public void action() {
-
-				// Leemos el texto que introduce el usuario por pantalla y lo enviamos al agente
-				// Agente Buscador
-				//Scanner scanner = new Scanner(System.in);
-				//System.out.print("Introduzca el texto a buscar: ");
-				//String temp = scanner.nextLine();
-
-				//List<String> tokenized = tokenize(temp);
-				//Utils.enviarMensaje(this.myAgent, "buscar", tokenized);
-				//ACLMessage msg = blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.INFORM));
-				// Cuando el agente AgenteBuscador responde, imprimimos su respuesta por
-				// pantalla
 			 	ACLMessage busqueda = blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
 				ACLMessage articulos = blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
 				String text = "";
@@ -79,28 +71,28 @@ public class AgenteOperador extends Agent{
 					List<Noticia> resultados = (List<Noticia>) articulos.getContentObject();
 					List<String> queryTok = (List<String>) busqueda.getContentObject();
 					String query = String.join(" ", queryTok);
-					// Mostramos los resultados
+					// calculamos distancia
 					if (resultados.isEmpty()) {
-						//System.out.println("No se encontraron noticias con el texto buscado.");
 						text = "No se encontraron noticias con el texto buscado" + "\n";
 					} else {
-						//System.out.println("\nResultados encontrados:");
 						RefactoredText refactoredQuery = new RefactoredText(query);
-						PriorityQueue<Noticia> pq = new PriorityQueue<>();
+						Map<String,Noticia> map = new HashMap<>();
 						for(Noticia resultado : resultados) {
 							String resultadoS =  resultado.getCuerpo();
 							RefactoredText refactoredText = new RefactoredText(resultadoS);
 							Double dist = refactoredQuery.getDistanceL1(refactoredText);
 							resultado.setScore(dist);
-							pq.offer(resultado);
+							if(!map.containsKey(resultado.getUrl())) map.put(resultado.getUrl(),resultado);
 						}
+						List<Noticia> list = new ArrayList<>(map.values());
+						Collections.sort(list);
 						ACLMessage aclMessage = new ACLMessage(ACLMessage.INFORM);
 						aclMessage.addReceiver(busqueda.getSender());
 						aclMessage.setOntology("ontologia");
 						aclMessage.setLanguage(new SLCodec().getName());
 						aclMessage.setEnvelope(new Envelope());
 						aclMessage.getEnvelope().setPayloadEncoding("ISO8859_1");
-						aclMessage.setContentObject((Serializable) new ArrayList<Noticia>(pq));
+						aclMessage.setContentObject((Serializable) list);
 						this.myAgent.send(aclMessage);
 						
 					}

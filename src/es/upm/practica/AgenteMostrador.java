@@ -83,16 +83,7 @@ public class AgenteMostrador extends Agent {
 		@Override
 		public void action() {
 
-			// Leemos el texto que introduce el usuario por pantalla y lo enviamos al agente
-			// Agente Buscador
-			//Scanner scanner = new Scanner(System.in);
-			//System.out.print("Introduzca el texto a buscar: ");
-			//String temp = scanner.nextLine();
-
-			//List<String> tokenized = tokenize(temp);
-			//Utils.enviarMensaje(this.myAgent, "buscar", tokenized);
-			//ACLMessage msg = blockingReceive(MessageTemplate.MatchPerformative(ACLMessage.INFORM));
-			// Cuando el agente AgenteBuscador responde, imprimimos su respuesta por
+			// Cuando el agente AgenteOperador responde, imprimimos su respuesta por
 			// pantalla
 
 			this.myAgent.doWait();			
@@ -106,13 +97,10 @@ public class AgenteMostrador extends Agent {
 			String text = "";
 			try {
 				List<Noticia> resultados = (List<Noticia>) msg.getContentObject();
-				Collections.sort(resultados);
 				// Mostramos los resultados
 				if (resultados.isEmpty()) {
-					//System.out.println("No se encontraron noticias con el texto buscado.");
 					text = "No se encontraron noticias con el texto buscado" + "\n";
 				} else {
-					//System.out.println("\nResultados encontrados:");
 					for (Noticia noticia : resultados) {
 						System.out.println("Título:\t" + noticia.getTitulo());
 						System.out.println("Distancia:\t" + noticia.getScore());
